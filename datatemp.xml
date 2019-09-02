@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+    <Config>
+        <singleData>
+            <Xpath>xpath goes here</Xpath>
+            <NodeReplaceRegex>
+                <li>
+                    <key>key goes here</key>
+                    <value>value goes here</value>
+                </li>
+            </NodeReplaceRegex>
+        </singleData>
+    </Config>
+</Data>

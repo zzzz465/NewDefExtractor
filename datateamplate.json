@@ -1,0 +1,13 @@
+{
+    "Configs" :
+    {
+        "label" :
+        {
+            "Xpath" : "",
+            "NodeReplaceRegex" : 
+            {
+                "[\\w]+Def" : "value"
+            }
+        }
+    }    
+}
