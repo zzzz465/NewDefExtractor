@@ -72,7 +72,6 @@ namespace NewDefExtractor
                     nodes2.AddRange(item.Value);
                     if (nodes2.Count > NodeLimitPerXMLFile)
                     {
-                        nodes2.Sort();
                         XDocument doc = DocumentBuilder.PrepareXDoc(nodes2);
                         doc.Save(Path.Combine(folderPath, rootName + count + ".xml"));
                         count++;
@@ -81,7 +80,6 @@ namespace NewDefExtractor
                 }
                 if(nodes2.Count > 0)
                 {
-                    nodes2.Sort();
                     XDocument doc = DocumentBuilder.PrepareXDoc(nodes2);
                     doc.Save(Path.Combine(folderPath, rootName + count + ".xml"));
                     count++;

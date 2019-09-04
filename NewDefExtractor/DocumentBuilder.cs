@@ -16,16 +16,17 @@ namespace NewDefExtractor
         /// <summary>
         /// 주어진 노드를 가지고 하나의 XDoc를 생성함
         /// </summary>
-        /// <param name="sortedNodes">Xdoc 내부의 컨텐츠</param>
+        /// <param name="unsortedNodes">Xdoc 내부의 컨텐츠</param>
         /// <returns></returns>
-        public static XDocument PrepareXDoc(List<TargetNode> sortedNodes)
+        public static XDocument PrepareXDoc(List<TargetNode> unsortedNodes)
         {//indent는 xml 작성할떄 해야함.
+            unsortedNodes.Sort();
             XDocument doc = new XDocument();
             doc.Add(new XElement("LanguagesData"));
             XElement root = doc.Root;
             List<XNode> NodesToAdd = new List<XNode>();
             string latestDefname = string.Empty;
-            foreach (TargetNode node in sortedNodes)
+            foreach (TargetNode node in unsortedNodes)
             {
                 string NodeName = NodeBuilder(node);
                 string defName = node.defName;

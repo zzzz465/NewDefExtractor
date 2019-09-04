@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace NewDefExtractor
 {
@@ -101,6 +102,35 @@ namespace NewDefExtractor
             if (CompareDefName != 0)
                 return CompareDefName;
 
+            //if (this.defName == "CreateMedicalRib" && other.defName == "CreateMedicalRib")
+            //    Debugger.Break();
+
+            //길이로 비교
+
+            int depth1 = this.AncestorsAndSelf.Count();
+            int depth2 = other.AncestorsAndSelf.Count();
+
+            if (depth1 < depth2)
+                return -1;
+            else if (depth1 > depth2)
+                return 1;
+
+            XElement[] nodecollection1 = this.AncestorsAndSelf.ToArray();
+            XElement[] nodecollection2 = other.AncestorsAndSelf.ToArray();
+
+            for (int i = 0; i < this.AncestorsAndSelf.Count(); i++)
+            {
+                string nodename1 = nodecollection1[i].Name.LocalName;
+                string nodename2 = nodecollection2[i].Name.LocalName;
+                int compareResult = GetOrder(nodename1, nodename2);
+                if (compareResult != 0)
+                    return compareResult;
+                else
+                    continue;
+            }
+
+            return 0;
+            /*
             int i = 0;
             int this_nodeLength = this.AncestorsAndSelf.Count();
             int other_nodeLength = other.AncestorsAndSelf.Count();
@@ -109,7 +139,7 @@ namespace NewDefExtractor
                 return -1;
             else if (this_nodeLength > other_nodeLength)
                 return 1;
-            else*/
+            else
             {
                 int least_max = this.AncestorsAndSelf.Count() > other.AncestorsAndSelf.Count() ? other.AncestorsAndSelf.Count() : this.AncestorsAndSelf.Count(); // 항상 동일하므로 별 의미는 없음
                 for (i = 0; i < least_max; i++)
@@ -119,7 +149,7 @@ namespace NewDefExtractor
                     int CompareResult = string.Compare(this_localname, other_localname);
                     return CompareResult;
                 }
-            }
+            }*/
 
             //마지막 노드 이름으로 정렬
             List<string> ElementOrder = new List<string>()
@@ -155,6 +185,45 @@ namespace NewDefExtractor
                     return 0;
             }
             //int CompareLastLabelName 
+        }
+
+        int GetOrder(string value1, string value2)
+        {
+            //int num1 = -1;
+            //int num2 = -1;
+            //bool flag1 = int.TryParse(value1, out num1);
+            //bool flag2 = int.TryParse(value2, out num2);
+            //
+            //if(flag1 && flag2)
+            //{
+            //    if (num1 < num2)
+            //        return -1;
+            //    if (num1 > num2)
+            //        return 1;
+            //}
+            //
+            List<string> fixedOrder = new List<string>()
+            {
+                "label",
+                "description"
+            };
+            int index1 = fixedOrder.IndexOf(value1);
+            int index2 = fixedOrder.IndexOf(value2);
+
+            if (index1 == -1 && index2 == -1)
+                return string.Compare(value1, value2);
+            else if (index1 == -1 && index2 != -1)
+                return 1;
+            else if (index1 != -1 && index2 == -1)
+                return -1;
+            else //둘다 안에 있을경우
+            {
+                if (index1 < index2)
+                    return -1;
+                if (index1 > index2)
+                    return 1;
+                return 0;
+            }
         }
     }
 }
