@@ -1,0 +1,15 @@
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\bin\Release\NewDefExtractor.GUI.exe.config
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\bin\Release\NewDefExtractor.GUI.exe
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\bin\Release\NewDefExtractor.GUI.pdb
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI.csprojAssemblyReference.cache
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\View.g.cs
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\App.g.cs
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI_MarkupCompile.cache
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI_MarkupCompile.lref
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\View.baml
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI.g.resources
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI.Properties.Resources.resources
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI.csproj.GenerateResource.cache
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI.csproj.CoreCompileInputs.cache
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI.exe
+C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor.GUI\obj\Release\NewDefExtractor.GUI.pdb

@@ -1,0 +1,38 @@
+﻿<Window x:Class="NewDefExtractor.GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NewDefExtractor.GUI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="1280">
+    <StackPanel>
+        <Grid x:Name="TopGrid" Height="100"></Grid>
+        <Grid x:Name="MainGrid" Height="591">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel x:Name="outStackPanel" Background="Green" Height="{Binding ElementName=MainGrid, Path=Height}">
+                <TextBlock x:Name="SearchBox">asdf</TextBlock>
+                <ListBox ItemsSource="{Binding 어쩌고}" MinHeight="575" Background="Yellow">
+                    <!-- 아이템을 여기에 추가 -->
+                </ListBox>
+            </StackPanel>
+            
+            <Grid x:Name="RightGrid" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="300"/>
+                </Grid.RowDefinitions>
+                <WrapPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Blue">
+                    <CheckBox>asdf</CheckBox>
+                </WrapPanel>
+                <RichTextBox Background="Aqua" Grid.Row="1"></RichTextBox>
+            </Grid>
+        </Grid>
+    </StackPanel>
+</Window>

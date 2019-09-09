@@ -57,19 +57,32 @@ namespace NewDefExtractor
             List<TargetNode> nodes = new List<TargetNode>();
             string latestRootNodeName = string.Empty;
             string latestDefName = string.Empty;
+            int total_nodeCount = 0;
 
             foreach(string rootName in sorted.Keys)
             {
+                SimpleLog.WriteLine("");
+                SimpleLog.WriteLine(string.Format("상위 노드 {0}에 대한 번역 데이터를 기록합니다...", rootName), ConsoleColor.Cyan);
                 int count = 0;
+                int nodeCount = 0;
                 string folderPath = Path.Combine(export.FileName, rootName);
                 string filePath = Path.Combine(folderPath, rootName + count + ".xml");
+                string defName = string.Empty;
                 Directory.CreateDirectory(folderPath);
                 List<TargetNode> nodes2 = new List<TargetNode>();
                 
                 foreach (var item in sorted[rootName])
                 {
-                    string defName = item.Key;
-                    nodes2.AddRange(item.Value);
+                    defName = item.Key;
+                    SimpleLog.Write(string.Format("DefName "), ConsoleColor.Green);
+                    SimpleLog.Write(defName, ConsoleColor.White);
+                    SimpleLog.WriteLine(" 하위의 번역 데이터를 기록합니다...", ConsoleColor.Green);
+                    //여기를 수정했음
+                    List<TargetNode> TargetNodesToAdd = item.Value;
+                    TargetNodesToAdd.Sort();
+                    nodes2.AddRange(TargetNodesToAdd);
+                    nodeCount += item.Value.Count;
+                    total_nodeCount += item.Value.Count;
                     if (nodes2.Count > NodeLimitPerXMLFile)
                     {
                         XDocument doc = DocumentBuilder.PrepareXDoc(nodes2);
@@ -81,13 +94,23 @@ namespace NewDefExtractor
                 if(nodes2.Count > 0)
                 {
                     XDocument doc = DocumentBuilder.PrepareXDoc(nodes2);
+                    SimpleLog.Write(string.Format("DefName "), ConsoleColor.Green);
+                    SimpleLog.Write(defName, ConsoleColor.White);
+                    SimpleLog.WriteLine(" 하위의 번역 데이터를 기록합니다...", ConsoleColor.Green);
                     doc.Save(Path.Combine(folderPath, rootName + count + ".xml"));
                     count++;
                     nodes2.Clear();
                 }
+                SimpleLog.Write("상위 노드 ", ConsoleColor.Cyan);
+                SimpleLog.Write(rootName);
+                SimpleLog.Write(" 하위에 ", ConsoleColor.Cyan);
+                SimpleLog.Write(string.Format("{0} 개의 파일 ", count), ConsoleColor.Yellow);
+                SimpleLog.Write(string.Format("{0}개의 노드", nodeCount), ConsoleColor.Red);
+                SimpleLog.WriteLine("가 기록되었습니다.");
             }
 
-            SimpleLog.WriteLine("작업이 종료되었습니다! X키를 눌러 창을 닫아주세요.", ConsoleColor.DarkCyan);
+            SimpleLog.WriteLine(string.Format("\n노드 {0} 개에 대한 데이터 작성이 완료되었습니다...", total_nodeCount), ConsoleColor.Cyan);
+            SimpleLog.WriteLine("\n\n작업이 종료되었습니다! X키를 눌러 창을 닫아주세요.", ConsoleColor.DarkYellow);
             while(true)
             {
 

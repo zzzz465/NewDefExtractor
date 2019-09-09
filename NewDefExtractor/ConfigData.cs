@@ -48,7 +48,7 @@ namespace NewDefExtractor
 
             this.Xpath = Xpath;
 
-            JObject NodeReplaceRegex = (Config["NodeReplaceRegex"] as JObject);
+            JObject NodeReplaceRegex = (Config["NodeReplaceData"] as JObject); // 수정
             if (NodeReplaceRegex == null)
                 throw new ArgumentException(string.Format("config {0}에 NodeReplaceRegex가 없거나, 정상적인 데이터가 아닙니다.", name));
 

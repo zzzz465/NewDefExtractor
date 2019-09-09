@@ -53,11 +53,11 @@ namespace NewDefExtractor
                         SimpleLog.WriteLine(string.Format("노드 {0} 을 리스트에 추가합니다...", node.ToString()), ConsoleColor.Green);
                     }
                     else
-                        SimpleLog.WriteLine(string.Format("노드 {0} 을 건너뜁니다..", targetXElement.ToString()), ConsoleColor.DarkMagenta);
+                        SimpleLog.WriteLine(string.Format("중복된 노드 {0} 을 건너뜁니다..", targetXElement.ToString()), ConsoleColor.DarkMagenta);
                 }
                 catch
                 {
-                    SimpleLog.WriteLine(string.Format("노드 {0} 을 건너뜁니다..", targetXElement.ToString()), ConsoleColor.DarkMagenta);
+                    SimpleLog.WriteLine(string.Format("에러가 발생한 노드 {0} 을 건너뜁니다..", targetXElement.ToString()), ConsoleColor.DarkMagenta);
                 }
             }
             return ParsedElements;
