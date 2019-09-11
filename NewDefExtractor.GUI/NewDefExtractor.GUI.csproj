@@ -55,6 +55,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="LabelTextboxSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -64,6 +68,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controller.cs" />
+    <Compile Include="LabelTextboxSet.xaml.cs">
+      <DependentUpon>LabelTextboxSet.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Mod.cs" />
     <Compile Include="ProgramConfig.cs" />
     <Compile Include="View.xaml.cs">

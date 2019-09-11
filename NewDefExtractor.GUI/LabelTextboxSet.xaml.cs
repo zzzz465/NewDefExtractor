@@ -15,16 +15,17 @@ using System.Windows.Shapes;
 
 namespace NewDefExtractor.GUI
 {
-    /// <summary>
-    /// MainWindow.xaml에 대한 상호 작용 논리
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-		public string Test { get { return "This is string"; } }
-        public MainWindow()
-        {
-            InitializeComponent();
+	/// <summary>
+	/// LabelTextboxSet.xaml에 대한 상호 작용 논리
+	/// </summary>
+	public partial class LabelTextboxSet : UserControl
+	{
+		public string LeftLabel { get; set; }
+		public string TextBoxContent { get; set; }
+		public LabelTextboxSet()
+		{
+			InitializeComponent();
 			this.DataContext = this;
-        }
-    }
+		}
+	}
 }
