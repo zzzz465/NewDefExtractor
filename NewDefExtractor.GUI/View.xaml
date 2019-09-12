@@ -31,8 +31,7 @@
                 <TextBlock Grid.Row="0" x:Name="SearchBox"></TextBlock>
                 <ListBox Grid.Row="1" VerticalAlignment="Stretch" Background="Yellow">
                     <!-- 아이템을 여기에 추가 -->
-                    <ListBoxItem Content="{Binding Path=Test}"></ListBoxItem>
-                    <Label>asdf</Label>
+                     <!-- <ListBoxItem Content="{Binding Path=Test}"></ListBoxItem> -->
                 </ListBox>
             </Grid>
             

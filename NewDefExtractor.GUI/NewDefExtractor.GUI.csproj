@@ -59,6 +59,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ModContainer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -72,6 +76,9 @@
       <DependentUpon>LabelTextboxSet.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mod.cs" />
+    <Compile Include="ModContainer.xaml.cs">
+      <DependentUpon>ModContainer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProgramConfig.cs" />
     <Compile Include="View.xaml.cs">
       <DependentUpon>View.xaml</DependentUpon>

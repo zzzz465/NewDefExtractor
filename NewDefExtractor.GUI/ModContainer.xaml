@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="NewDefExtractor.GUI.ModContainer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NewDefExtractor.GUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="120" d:DesignWidth="400">
+    <!-- 한개의 모드를 담고있는 ListboxItem, 좌측 리스트에 추가되어야 함 -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" x:Name="ModName" Content="{Binding Path=ModName}"/>
+        <Label Grid.Row="1" x:Name="FolderName" Content="{Binding Path=FolderName}"/>
+    </Grid>
+</UserControl>
