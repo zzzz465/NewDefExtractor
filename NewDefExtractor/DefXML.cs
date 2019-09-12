@@ -43,8 +43,14 @@ namespace NewDefExtractor
                 {
                     TargetNode node = new TargetNode(targetXElement, ConfigData);
                     //여기 중복 체크가 제대로 되는지 확인하자. //FIXME
+                    /* 기존 알고리즘 (부모 노드도 동일한지 체크)
                     bool isDuplicated = (from CollectedNode in CollectedNodes
-                                         where CollectedNode.defName == node.defName && CollectedNode.ParentNode == node.ParentNode && node.currentNodeValue == CollectedNode.Value
+                                        where CollectedNode.defName == node.defName && CollectedNode.ParentNode == node.ParentNode && node.currentNodeValue == CollectedNode.Value
+                                        select CollectedNode).FirstOrDefault() != null;
+                                         */
+                     
+                    bool isDuplicated = (from CollectedNode in CollectedNodes
+                                         where CollectedNode.defName == node.defName && node.currentNodeValue == CollectedNode.Value
                                          select CollectedNode).FirstOrDefault() != null;
                     if (!isDuplicated)
                     {

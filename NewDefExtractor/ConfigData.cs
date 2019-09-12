@@ -67,7 +67,7 @@ namespace NewDefExtractor
             }
 
             if (string.IsNullOrEmpty(this.IgnoreBeforeThis))
-                this.IgnoreBeforeThis = "./defName";
+                this.IgnoreBeforeThis = "./defName | ./def";
 
             ParseNodeReplaceRegex(NodeReplaceRegex);
         }
@@ -118,7 +118,7 @@ namespace NewDefExtractor
                 string key = item.Key;
                 string value = (item.Value as JValue).Value as string;
                 ReplaceDataType dataType = ReplaceDataType.Regex; // 기본값
-                if (value.StartsWith("%"))
+                if (key.StartsWith("%"))
                     dataType = ReplaceDataType.Xpath;
                 //else
                 //    dataType = ReplaceDataType.Regex;

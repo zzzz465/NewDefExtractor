@@ -28,10 +28,19 @@ namespace NewDefExtractor
             XElement root = doc.Root;
             List<XNode> NodesToAdd = new List<XNode>();
             string latestDefname = string.Empty;
+
+            List<string> AddedNodes = new List<string>(); // 노드 중복을 제거하기 위해서 여기다 저장 및 체크
+
             foreach (TargetNode node in unsortedNodes)
             {
                 string NodeName = NodeBuilder(node);
                 string defName = node.defName;
+
+                if (AddedNodes.Contains(NodeName))
+                    continue;
+                else
+                    AddedNodes.Add(NodeName);
+
                 if (defName != latestDefname)
                 {
                     latestDefname = defName;
@@ -48,16 +57,34 @@ namespace NewDefExtractor
 
         static string NodeBuilder(TargetNode node)
         {
+            if (node.isPatch) // 패치 타입을 가져올 경우 좀 더 단순함
+            {
+                List<string> Nodes = new List<string>();
+                string rawXpath = node.RawXpath;
+                string defName = Regex.Match(rawXpath, "(?<=defName=\")[\\w] + (?= \"])").Value;
+                string ReturnValue = rawXpath;
+                foreach (Match matched in Regex.Matches(rawXpath, "li\\[\\d\\]"))
+                {
+                    //li\[\d\]
+                    //(?<=\\/li\\[)\\d(?=\\])
+                    string num = Regex.Match(matched.Value, "(?<=li\\[)\\d(?=\\])").Value;
+                    ReturnValue.Replace(matched.Value, num);
+                }
+            }
+
+
             string returnValue = string.Empty;
             List<string> values = new List<string>();
             ConfigData selector = node.NodeSelector;
-            IEnumerator<XElement> AncestorsAndSelfEnumerator = node.AncestorsAndSelf.GetEnumerator();
-            while (AncestorsAndSelfEnumerator.Current == null || AncestorsAndSelfEnumerator.Current.XPathSelectElement(selector.IgnoreBeforeThis) == null)
-                AncestorsAndSelfEnumerator.MoveNext();
+            bool flag = true; // X 이전 건너뛰기 위한 분기점
 
-            do
+            foreach(XElement elem in node.AncestorsAndSelf)
             {
-                XElement elem = AncestorsAndSelfEnumerator.Current;
+                if (elem.XPathSelectElement(selector.IgnoreBeforeThis) != null)
+                    flag = false;
+                if (flag)
+                    continue;
+
                 //string ValueToReplace = string.Empty;
                 NodeReplaceData repData;
                 if(!selector.FindMatchingConfigData(elem, out repData))
@@ -89,7 +116,7 @@ namespace NewDefExtractor
                 else
                     values.Add(elem.Name.LocalName);
             }
-            while (AncestorsAndSelfEnumerator.MoveNext());
+
             returnValue = string.Join(".", values.ToArray());
             return returnValue;
         }

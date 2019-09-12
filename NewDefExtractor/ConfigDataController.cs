@@ -42,8 +42,13 @@ namespace NewDefExtractor
 
             foreach(TargetNode node in SelectedNodes)
             {
-                string rootNodeName = node.RootNodeName;
+                string rootNodeName = node.RootDefNodeName;
                 string defName = node.defName;
+                if (string.IsNullOrEmpty(defName))
+                {
+                    SimpleLog.WriteLine(string.Format("타겟 노드 {0} 에는 defName 또는 def 이 없습니다. 노드를 건너뜁니다...", node.currentName), ConsoleColor.Red);
+                    continue; //def 또는 defName이 없는 경우(정상적인 상태가 아님)
+                }
                 if (!sorted.ContainsKey(rootNodeName))
                     sorted.Add(rootNodeName, new Dictionary<string, List<TargetNode>>());
                 if (!sorted[rootNodeName].ContainsKey(defName))
@@ -77,7 +82,7 @@ namespace NewDefExtractor
                     }
                     foreach(var item in parsedNodes)
                     {
-                        // 여기서 노드 중복 검사를 하면 안됨
+                        // 여기서 노드 중복 검사를 하면 안됨 -> 어디서하냐~~~~
                         /*
                         bool isDuplicated = (from comparee in CollectedNodes
                                              where comparee.defName == item.defName && comparee.Value == item.Value && comparee.RootNodeName == item.RootNodeName
@@ -104,7 +109,7 @@ namespace NewDefExtractor
             if (original == target)
                 return 0;
 
-            int result = string.Compare(original.RootNode.Name.LocalName, target.RootNode.Name.LocalName);
+            int result = string.Compare(original.RootDefNode.Name.LocalName, target.RootDefNode.Name.LocalName);
             return result;
         }
 

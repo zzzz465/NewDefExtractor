@@ -106,7 +106,7 @@ namespace NewDefExtractor
                 SimpleLog.Write(" 하위에 ", ConsoleColor.Cyan);
                 SimpleLog.Write(string.Format("{0} 개의 파일 ", count), ConsoleColor.Yellow);
                 SimpleLog.Write(string.Format("{0}개의 노드", nodeCount), ConsoleColor.Red);
-                SimpleLog.WriteLine("가 기록되었습니다.");
+                SimpleLog.WriteLine("가 기록되었습니다.", ConsoleColor.Cyan);
             }
 
             SimpleLog.WriteLine(string.Format("\n노드 {0} 개에 대한 데이터 작성이 완료되었습니다...", total_nodeCount), ConsoleColor.Cyan);

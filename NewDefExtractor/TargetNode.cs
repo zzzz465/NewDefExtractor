@@ -24,13 +24,25 @@ namespace NewDefExtractor
 
         readonly XElement CurrentNode;
         public string defName
-        {
+        {//만약 Patch에 대한걸 고치려면, xpath과 관련해서 노드명을 직접 적어줘야함... -> 여기로 옮기자.? X
             get
             { //null 일 경우가 있을 수 있음. -> PatchOperation일때
-                string returnValue = AncestorsAndSelf.FirstOrDefault().XPathSelectElement(".//defName").Value;
-                if (!string.IsNullOrEmpty(returnValue))
-                    return returnValue;
-                return AncestorsAndSelf.FirstOrDefault().XPathSelectElement(".//def").Value;
+                foreach(XElement elem in AncestorsAndSelf.Reverse())
+                {
+                    if(elem.XPathSelectElement("./defName") != null)
+                    {
+                        return elem.XPathSelectElement("./defName").Value;
+                    }
+                    else if(elem.XPathSelectElement("./def") != null)
+                    {
+                        return elem.XPathSelectElement("./def").Value;
+                    }
+                }
+                return null;
+                //    AncestorsAndSelf.FirstOrDefault().XPathSelectElement(".//defName").Value;
+                //if (!string.IsNullOrEmpty(returnValue))
+                //    return returnValue;
+                //return AncestorsAndSelf.FirstOrDefault().XPathSelectElement(".//def").Value;
             }
         }
 
@@ -49,25 +61,92 @@ namespace NewDefExtractor
                 return CurrentNode.Value;
             }
         }
-
+        /*
         /// <summary>
         /// 최상위 노드(Defs 바로 아래)를 참조합니다
         /// </summary>
-        public XElement RootNode
+        public XElement RootDefNode
         {
             get
             {
-                return AncestorsAndSelf.FirstOrDefault();
+                if(AncestorsAndSelf.First().Name.LocalName == "Patch") // patch 에 대해서
+                {
+                    foreach(var item in AncestorsAndSelf.Reverse())
+                    {
+                        if(item.Element("xpath") != null)
+                        {
+                            return item.Element("xpath");
+                        }
+                    }
+                }
+                else
+                {
+                    foreach(var item in AncestorsAndSelf.Reverse())
+                    {
+                        if(item.Element("defName") != null)
+                        {
+                            return item.Element("defName");
+                        }
+                    }
+                }
+                return;
+            }
+        }*/
+
+        public XElement RawXpath
+        {
+            get
+            {
+                XElement li_PatchRootNode = this.AncestorsAndSelf.Reverse() // li Class=PatchOperation어쩌고 노드를 선택
+                                                .Where(node => (node.Attribute("Class")?.Value.Contains("PatchOperation") == true))
+                                                .FirstOrDefault();
+                return null;
             }
         }
 
-        public string RootNodeName
+        public string RootDefNodeName
         {
             get
             {
-                return RootNode.Name.LocalName;
+                if(this.isPatch)
+                {
+                    if(RawXpath != null)
+                    {
+                        string rawXpath = RawXpath.Value;
+                        Match result = Regex.Match(rawXpath, "(?<=defName=\")[\\w] + (?= \"])");
+                        if (result.Success)
+                        {
+                            return result.Value;
+                        }
+                        else
+                            throw new Exception("Patch xpath를 파싱하는 도중 defName을 찾을 수 없습니다..");
+                    }
+                    return null;
+                    /*
+                    foreach(var item in this.AncestorsAndSelf.Reverse())
+                    {
+                        string rawXpath = item.Element("xpath")?.Value;
+                        if (!string.IsNullOrEmpty(rawXpath))
+                        {
+                            Match result = Regex.Match(rawXpath, "(?<=defName=\")[\\w] + (?= \"])");
+                            if (result.Success)
+                            {
+                                return result.Value;
+                            }
+                            else
+                                throw new Exception("Patch xpath를 파싱하는 도중 defName을 찾을 수 없습니다..");
+                        }
+                    }
+                    return null;
+                    */
+                }
+                else
+                {//Defs를 제외한 노드들이 AncestorsAndSelf 에 오므로, 첫번째 노드인 XXXDef 관련 데이터가 오게 될 것.
+                    return this.AncestorsAndSelf.FirstOrDefault()?.Name.LocalName;
+                }
             }
         }
+
         public string Value { get; }
         /// <summary>
         /// Defs 노드를 제외한 모든 노드를 반환합니다.
@@ -76,7 +155,22 @@ namespace NewDefExtractor
         {
             get
             {
-                return CurrentNode.AncestorsAndSelf().Where(node => node.Name != "Defs").Reverse();
+                return CurrentNode.AncestorsAndSelf().Where(
+                    node => node.Name != "Defs" 
+                    || node.Name != "Patch" 
+                    || node.Name != "match" 
+                    || node.Name != "operations").Reverse();
+            }
+        }
+
+        public bool isPatch
+        {
+            get
+            {
+                if (CurrentNode.AncestorsAndSelf().First().Name.LocalName == "Defs")
+                    return false;
+                else
+                    return true;
             }
         }
 
