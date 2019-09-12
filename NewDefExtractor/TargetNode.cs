@@ -26,8 +26,11 @@ namespace NewDefExtractor
         public string defName
         {
             get
-            { //null 일 경우가 있을 수 있음.
-                return AncestorsAndSelf.FirstOrDefault().XPathSelectElement(".//defName").Value;
+            { //null 일 경우가 있을 수 있음. -> PatchOperation일때
+                string returnValue = AncestorsAndSelf.FirstOrDefault().XPathSelectElement(".//defName").Value;
+                if (!string.IsNullOrEmpty(returnValue))
+                    return returnValue;
+                return AncestorsAndSelf.FirstOrDefault().XPathSelectElement(".//def").Value;
             }
         }
 

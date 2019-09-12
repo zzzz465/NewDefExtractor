@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Collections;
 using System.Xml.XPath;
 
 namespace NewDefExtractor
@@ -20,7 +21,8 @@ namespace NewDefExtractor
         /// <returns></returns>
         public static XDocument PrepareXDoc(List<TargetNode> unsortedNodes)
         {//indent는 xml 작성할떄 해야함.
-            unsortedNodes.Sort();
+            //여기도 수정했음
+            //unsortedNodes.Sort();
             XDocument doc = new XDocument();
             doc.Add(new XElement("LanguagesData"));
             XElement root = doc.Root;
@@ -34,6 +36,7 @@ namespace NewDefExtractor
                 {
                     latestDefname = defName;
                     NodesToAdd.Add(new XComment(latestDefname));
+                    //NodesToAdd.Add(new x)
                 }
                 NodesToAdd.Add(new XElement(NodeName, node.Value));
             }
@@ -48,26 +51,30 @@ namespace NewDefExtractor
             string returnValue = string.Empty;
             List<string> values = new List<string>();
             ConfigData selector = node.NodeSelector;
-            foreach (XElement elem in node.AncestorsAndSelf)
-            {
-                string NodeName = elem.Name.LocalName;
+            IEnumerator<XElement> AncestorsAndSelfEnumerator = node.AncestorsAndSelf.GetEnumerator();
+            while (AncestorsAndSelfEnumerator.Current == null || AncestorsAndSelfEnumerator.Current.XPathSelectElement(selector.IgnoreBeforeThis) == null)
+                AncestorsAndSelfEnumerator.MoveNext();
 
-                string Xpath = (from item in selector.GetNodeReplaceRegexs
-                                where Regex.IsMatch(NodeName, item.Key)
-                                select item.Value).FirstOrDefault();
-                if (Xpath == null)
+            do
+            {
+                XElement elem = AncestorsAndSelfEnumerator.Current;
+                //string ValueToReplace = string.Empty;
+                NodeReplaceData repData;
+                if(!selector.FindMatchingConfigData(elem, out repData))
                 {
                     values.Add(elem.Name.LocalName);
                     continue;
                 }
-                    
+
+                string Xpath = repData.Value;
+
                 if (Xpath.Equals("#Count")) // li 전용
                 {
                     values.Add(elem.ElementsBeforeSelf().Count().ToString());
                 }
                 else if (Xpath.StartsWith("$"))
                 {
-                    values.Add(Xpath);
+                    values.Add(Xpath.Substring(1));
                 }
                 else if (!string.IsNullOrEmpty(Xpath)) // 해당하는게 있다면
                 {
@@ -82,6 +89,7 @@ namespace NewDefExtractor
                 else
                     values.Add(elem.Name.LocalName);
             }
+            while (AncestorsAndSelfEnumerator.MoveNext());
             returnValue = string.Join(".", values.ToArray());
             return returnValue;
         }
