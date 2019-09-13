@@ -12,3 +12,17 @@ C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor\bin\Debug\Newton
 C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor\obj\Debug\NewDefExtractor.csproj.CopyComplete
 C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor\obj\Debug\NewDefExtractor.exe
 C:\Users\stopc\Documents\Github\NewDefExtractor\NewDefExtractor\obj\Debug\NewDefExtractor.pdb
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\NewDefExtractor.exe.config
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\NewDefExtractor.exe
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\NewDefExtractor.pdb
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\Microsoft.WindowsAPICodePack.dll
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\Newtonsoft.Json.dll
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\Microsoft.WindowsAPICodePack.xml
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\Microsoft.WindowsAPICodePack.Shell.xml
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\bin\Debug\Newtonsoft.Json.xml
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\obj\Debug\NewDefExtractor.csprojAssemblyReference.cache
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\obj\Debug\NewDefExtractor.csproj.CoreCompileInputs.cache
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\obj\Debug\NewDefExtractor.csproj.CopyComplete
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\obj\Debug\NewDefExtractor.exe
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor\obj\Debug\NewDefExtractor.pdb

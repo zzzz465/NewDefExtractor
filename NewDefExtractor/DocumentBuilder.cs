@@ -59,17 +59,13 @@ namespace NewDefExtractor
         {
             if (node.isPatch) // 패치 타입을 가져올 경우 좀 더 단순함
             {
-                List<string> Nodes = new List<string>();
-                string rawXpath = node.RawXpath;
-                string defName = Regex.Match(rawXpath, "(?<=defName=\")[\\w] + (?= \"])").Value;
-                string ReturnValue = rawXpath;
-                foreach (Match matched in Regex.Matches(rawXpath, "li\\[\\d\\]"))
-                {
-                    //li\[\d\]
-                    //(?<=\\/li\\[)\\d(?=\\])
-                    string num = Regex.Match(matched.Value, "(?<=li\\[)\\d(?=\\])").Value;
-                    ReturnValue.Replace(matched.Value, num);
-                }
+                foreach(var singleNode in node.AncestorsAndSelfForPatch)
+				{
+					foreach(var item in node.NodeSelector.GetNodeReplaceDatas.Where(item => !item.Key.StartsWith("%")).Select(item => item))
+					{
+
+					}
+				}
             }
 
 

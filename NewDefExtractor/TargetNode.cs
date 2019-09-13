@@ -92,36 +92,69 @@ namespace NewDefExtractor
                 return;
             }
         }*/
+        private List<string> AncestorsAndSelfForPatchCached;
 
-        public XElement RawXpath
+        public List<string> AncestorsAndSelfForPatch
         {
             get
             {
-                XElement li_PatchRootNode = this.AncestorsAndSelf.Reverse() // li Class=PatchOperation어쩌고 노드를 선택
-                                                .Where(node => (node.Attribute("Class")?.Value.Contains("PatchOperation") == true))
-                                                .FirstOrDefault();
-                return null;
+                if(AncestorsAndSelfForPatchCached != null)
+                    return AncestorsAndSelfForPatchCached;
+
+                List<string> Nodes = new List<string>();
+                var node = (from elem in this.AncestorsAndSelf.Reverse()
+                            where elem.XPathSelectElement("./defName") != null
+                            select elem).FirstOrDefault();
+                if(node != null) //defName이 명시되어 있는 경우
+                {
+                    Nodes.AddRange( this.AncestorsAndSelf.Where(item => item.XPathSelectElement(".//defName") == null)
+                                                         .Select(item => item.Name.LocalName) );
+
+                }
+                else //xpath 노드가 있는 경우
+                {
+                    string rawXpath = this.AncestorsAndSelf.Where(item => item.Element("xpath") != null).Select(item => item.Value).First();
+                    string defName = this.RootDefNodeName;
+                    Match result = Regex.Match(rawXpath, "\\/[\\w]+\\[defName=\"[\\w\\d]+\"\\]");
+                    Nodes.AddRange(rawXpath.Substring(result.Index + result.Length).Split('/'));
+                    Nodes.Add(this.defName);
+                    Nodes.Add(this.currentName);
+                }
+                return Nodes;
             }
         }
 
+        private string RootDefNodeNameCached;
+
+        //XXXDef 같은것들을 가져옴
         public string RootDefNodeName
         {
             get
             {
+                if(!string.IsNullOrEmpty(RootDefNodeNameCached))
+                    return RootDefNodeNameCached;
+
                 if(this.isPatch)
                 {
-                    if(RawXpath != null)
+                    var node = (from elem in this.AncestorsAndSelf.Reverse()
+                                where elem.XPathSelectElement("./defName") != null
+                                select elem).FirstOrDefault();
+                    if(node != null) //defName이 명시되어 있는 경우
                     {
-                        string rawXpath = RawXpath.Value;
-                        Match result = Regex.Match(rawXpath, "(?<=defName=\")[\\w] + (?= \"])");
-                        if (result.Success)
-                        {
-                            return result.Value;
-                        }
-                        else
-                            throw new Exception("Patch xpath를 파싱하는 도중 defName을 찾을 수 없습니다..");
+                        this.RootDefNodeNameCached = node.Name.LocalName;
                     }
-                    return null;
+                    else //xpath 노드가 있는 경우
+                    {
+                        string rawXpath = this.AncestorsAndSelf.Where(item => item.Element("xpath") != null).Select(item => item.Value).First();
+                        this.RootDefNodeNameCached = Regex.Match(rawXpath, "(?<=/)[\\w]+(?=\\[defName)").Value;
+                    }
+                    //Match result = Regex.Match(rawXpath, "(?<=defName=\")[\\w] + (?= \"])");
+                    //if (result.Success)
+                    //{
+                    //    return result.Value;
+                    //}
+                    //else
+                    //    throw new Exception("Patch xpath를 파싱하는 도중 defName을 찾을 수 없습니다..");
                     /*
                     foreach(var item in this.AncestorsAndSelf.Reverse())
                     {
@@ -142,8 +175,9 @@ namespace NewDefExtractor
                 }
                 else
                 {//Defs를 제외한 노드들이 AncestorsAndSelf 에 오므로, 첫번째 노드인 XXXDef 관련 데이터가 오게 될 것.
-                    return this.AncestorsAndSelf.FirstOrDefault()?.Name.LocalName;
+                    this.RootDefNodeNameCached = this.AncestorsAndSelf.FirstOrDefault()?.Name.LocalName;
                 }
+                return this.RootDefNodeNameCached;
             }
         }
 
