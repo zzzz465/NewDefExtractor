@@ -26,7 +26,7 @@ namespace NewDefExtractor.GUI
         List<string> LanguageList { get; }
         XDocument AboutXDoc { get; }
 
-        private Mod(DirectoryInfo ModRootFolder)
+        public Mod(DirectoryInfo ModRootFolder)
         {
             //기초 데이터 설정
             FolderPath = ModRootFolder.FullName;
@@ -43,26 +43,26 @@ namespace NewDefExtractor.GUI
                 supportedVersions.Add(elem.Value);
         }
 
-        /// <summary>
-        /// <br>create a single mod instance for target mod folder.</br>
-        /// <br>if the mod folder is already loaded or the structure is broken, it will return false. w</br>
-        /// </summary>
-        /// <param name="ModRootFolder">target mod folder root directory</param>
-        /// <returns></returns>
-        public static bool LoadSingleMod(DirectoryInfo ModRootFolder, out string message)
-        {
-            try
-            {
-                Mod inst = new Mod(ModRootFolder);
-                message = null;
-                return true;
-            }
-            catch(Exception ex)
-            {
-                message = ex.Message;
-                return false;
-            }
-        }
+        ///// <summary>
+        ///// <br>create a single mod instance for target mod folder.</br>
+        ///// <br>if the mod folder is already loaded or the structure is broken, it will return false. w</br>
+        ///// </summary>
+        ///// <param name="ModRootFolder">target mod folder root directory</param>
+        ///// <returns></returns>
+        //public static bool LoadSingleMod(DirectoryInfo ModRootFolder, out string message)
+        //{
+        //    try
+        //    {
+        //        Mod inst = new Mod(ModRootFolder);
+        //        message = null;
+        //        return true;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        message = ex.Message;
+        //        return false;
+        //    }
+        //}
 
     }
 }

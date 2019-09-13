@@ -30,3 +30,7 @@ C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor.GUI\obj\Debug\NewDe
 C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor.GUI\obj\Debug\NewDefExtractor.GUI.pdb
 C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor.GUI\obj\Debug\LabelTextboxSet.g.cs
 C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor.GUI\obj\Debug\LabelTextboxSet.baml
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor.GUI\obj\Debug\ModContainer.g.cs
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor.GUI\obj\Debug\ModContainer.baml
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor.GUI\obj\Debug\ConfigWindow.g.cs
+C:\Users\stopc\Documents\Git\NewDefExtractor\NewDefExtractor.GUI\obj\Debug\ConfigWindow.baml

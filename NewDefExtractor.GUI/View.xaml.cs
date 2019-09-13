@@ -22,11 +22,21 @@ namespace NewDefExtractor.GUI
     public partial class MainWindow : Window
     {
 		public string Test { get { return "This is string"; } }
+		public List<ModContainer> modContainers = new List<ModContainer>();
+		//public ProgramConfig Config;
         public MainWindow()
         {
             InitializeComponent();
 			this.DataContext = this;
+			this.ModListBox.ItemsSource = modContainers;
+			//Config = new ProgramConfig();
+			if(ProgramConfig.instance.isHaveProperPath)
+				this.LoadMods();
         }
+		public void LoadMod(object sender, RoutedEventArgs e)
+		{
+			LoadMods();
+		}
 
 		public void LoadMods()
 		{
@@ -45,7 +55,24 @@ namespace NewDefExtractor.GUI
 				DirectoryInfo info = new DirectoryInfo(item);
 				ModFolders.Add(info);
 			});
+			
+			foreach(var item in ModFolders)
+			{
+				Mod mod = new Mod(item);
+				ModContainer container = new ModContainer(mod);
+				modContainers.Add(container);
+			}
+		}
+
+		private void OpenOptionWIndow(object sender, RoutedEventArgs e)
+		{
+			ConfigWindow window = new ConfigWindow();
+			window.Show();
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
 
 		}
-    }
+	}
 }
