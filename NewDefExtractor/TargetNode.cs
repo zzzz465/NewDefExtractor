@@ -23,22 +23,34 @@ namespace NewDefExtractor
         public ConfigData NodeSelector { get; }
 
         readonly XElement CurrentNode;
+		private string defNameCached;
         public string defName
         {//만약 Patch에 대한걸 고치려면, xpath과 관련해서 노드명을 직접 적어줘야함... -> 여기로 옮기자.? X
             get
             { //null 일 경우가 있을 수 있음. -> PatchOperation일때
-                foreach(XElement elem in AncestorsAndSelf.Reverse())
-                {
-                    if(elem.XPathSelectElement("./defName") != null)
-                    {
-                        return elem.XPathSelectElement("./defName").Value;
-                    }
-                    else if(elem.XPathSelectElement("./def") != null)
-                    {
-                        return elem.XPathSelectElement("./def").Value;
-                    }
-                }
-                return null;
+				if (string.IsNullOrEmpty(defNameCached))
+				{
+					foreach (XElement elem in AncestorsAndSelf)
+					{
+						if (elem.XPathSelectElement("./defName") != null)
+						{
+							defNameCached = elem.XPathSelectElement("./defName").Value;
+							break;
+						}
+						else if (elem.XPathSelectElement("./xpath") != null)
+						{
+							Match match = Regex.Match(elem.XPathSelectElement("./xpath").Value, "(?<=\\[defName=\")[\\w]+(?=\"\\])");
+							if (match.Success)
+							{ 
+								defNameCached = match.Value;
+								break;
+							}
+							else
+								continue;
+						}
+					}
+				}
+				return defNameCached;
                 //    AncestorsAndSelf.FirstOrDefault().XPathSelectElement(".//defName").Value;
                 //if (!string.IsNullOrEmpty(returnValue))
                 //    return returnValue;
@@ -93,7 +105,7 @@ namespace NewDefExtractor
             }
         }*/
         private List<string> AncestorsAndSelfForPatchCached;
-
+		/*
         public List<string> AncestorsAndSelfForPatch
         {
             get
@@ -107,8 +119,16 @@ namespace NewDefExtractor
                             select elem).FirstOrDefault();
                 if(node != null) //defName이 명시되어 있는 경우
                 {
-                    Nodes.AddRange( this.AncestorsAndSelf.Where(item => item.XPathSelectElement(".//defName") == null)
-                                                         .Select(item => item.Name.LocalName) );
+					IEnumerator<XElement> enumerator = this.AncestorsAndSelf.GetEnumerator();
+					while(enumerator.MoveNext())
+					{
+						if (enumerator.Current == RootDefNode)
+							break;
+					}
+					while(enumerator.MoveNext())
+					{
+						Nodes.Add()
+					}
 
                 }
                 else //xpath 노드가 있는 경우
@@ -122,9 +142,18 @@ namespace NewDefExtractor
                 }
                 return Nodes;
             }
-        }
+        }*/
 
         private string RootDefNodeNameCached;
+        public XElement RootDefNode
+        {
+            get
+            {
+                return this.AncestorsAndSelf.Where(item => 
+                       item.Element("defName") != null && item.Attribute("Abstract")?.Value?.ToLower() != "abstract"
+                       && Regex.IsMatch(item.Name.LocalName, "[\\w]+Def")).FirstOrDefault();
+            }
+        }
 
         //XXXDef 같은것들을 가져옴
         public string RootDefNodeName
@@ -141,7 +170,7 @@ namespace NewDefExtractor
                                 select elem).FirstOrDefault();
                     if(node != null) //defName이 명시되어 있는 경우
                     {
-                        this.RootDefNodeNameCached = node.Name.LocalName;
+                        this.RootDefNodeNameCached = this.RootDefNode.Name.LocalName;
                     }
                     else //xpath 노드가 있는 경우
                     {
@@ -175,7 +204,8 @@ namespace NewDefExtractor
                 }
                 else
                 {//Defs를 제외한 노드들이 AncestorsAndSelf 에 오므로, 첫번째 노드인 XXXDef 관련 데이터가 오게 될 것.
-                    this.RootDefNodeNameCached = this.AncestorsAndSelf.FirstOrDefault()?.Name.LocalName;
+                    //this.RootDefNodeNameCached = this.AncestorsAndSelf.FirstOrDefault()?.Name.LocalName;
+                    this.RootDefNodeNameCached = this.RootDefNode.Name.LocalName;
                 }
                 return this.RootDefNodeNameCached;
             }

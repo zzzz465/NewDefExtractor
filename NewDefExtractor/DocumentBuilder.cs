@@ -57,16 +57,57 @@ namespace NewDefExtractor
 
         static string NodeBuilder(TargetNode node)
         {
+			List<XElement> nodes = new List<XElement>();
+			List<string> nodes2 = new List<string>();
             if (node.isPatch) // 패치 타입을 가져올 경우 좀 더 단순함
             {
-                foreach(var singleNode in node.AncestorsAndSelfForPatch)
-				{
-					foreach(var item in node.NodeSelector.GetNodeReplaceDatas.Where(item => !item.Key.StartsWith("%")).Select(item => item))
+                if(node.AncestorsAndSelf.Reverse().Where(item => item.XPathSelectElement("././defName") != null).FirstOrDefault() != null)
+				{//defName 을 하위로 갖고있는 XXXDef 임
+					IEnumerator<XElement> enumerator = node.AncestorsAndSelf.GetEnumerator();
+					while(enumerator.MoveNext()) // need code fix.
 					{
+						if (enumerator.Current.Element("defName") != null)
+						{
+							do
+							{
+								nodes.Add(enumerator.Current);
+							}
+							while (enumerator.MoveNext());
+						}
+					}
+				}
+				else
+				{
+					XElement Origin_li_node = node.AncestorsAndSelf.Reverse()
+																.Where(item => item.XPathSelectElement("../../xpath") != null)
+																.Select(item => item)
+																.FirstOrDefault();
 
+					string rawXpath = Origin_li_node.XPathSelectElement("../../xpath").Value;
+					string Xpath = Regex.Match(rawXpath, "(?<=defName=\"[\\w]*\"]/)[\\w/]+").Value;
+					MatchCollection collection = Regex.Matches(Xpath, "\\[[\\d]+\\]");
+					foreach(Match matched in collection)
+					{
+						string num = Regex.Match(matched.Value, "[\\d]+").Value;
+						Xpath.Replace(matched.Value, num);
+					}
+					nodes2.AddRange(Xpath.Split('/'));
+					nodes2.Add(Origin_li_node.Element("def")?.Value);
+					
+					IEnumerator<XElement> enumerator = node.AncestorsAndSelf.GetEnumerator();
+					while(enumerator.MoveNext())
+					{
+						if (enumerator.Current.XPathSelectElement("./def") != null)
+							break;
+					}
+					while (enumerator.MoveNext())
+					{
+						nodes.Add(enumerator.Current);
 					}
 				}
             }
+			else
+				nodes.AddRange(node.AncestorsAndSelf);
 
 
             string returnValue = string.Empty;
@@ -74,12 +115,15 @@ namespace NewDefExtractor
             ConfigData selector = node.NodeSelector;
             bool flag = true; // X 이전 건너뛰기 위한 분기점
 
-            foreach(XElement elem in node.AncestorsAndSelf)
+            foreach(XElement elem in nodes)
             {
+				if(!node.isPatch)
+				{
                 if (elem.XPathSelectElement(selector.IgnoreBeforeThis) != null)
                     flag = false;
                 if (flag)
                     continue;
+				}
 
                 //string ValueToReplace = string.Empty;
                 NodeReplaceData repData;
@@ -114,6 +158,10 @@ namespace NewDefExtractor
             }
 
             returnValue = string.Join(".", values.ToArray());
+			if(nodes2.Count > 0)
+			{
+				returnValue = node.defName + "." + string.Join(".", nodes2.ToArray()) + "." + returnValue;
+			}
             return returnValue;
         }
     }
