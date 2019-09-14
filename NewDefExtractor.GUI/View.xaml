@@ -40,6 +40,20 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" x:Name="SearchBox"></TextBlock>
                 <ListBox x:Name="ModListBox" Grid.Row="1" VerticalAlignment="Stretch" Background="Yellow">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" x:Name="ModName" Content="{Binding Path=ModName}"/>
+                                <Label Grid.Row="1" x:Name="ModFolderName" Content="{Binding Path=FolderName}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                     <!-- 아이템을 여기에 추가 -->
                      <!-- <ListBoxItem Content="{Binding Path=Test}"></ListBoxItem> -->
                 </ListBox>
@@ -57,7 +71,11 @@
                 <WrapPanel x:Name="InformationPanel" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Background="Red"
                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0, 40, 0, 0">
                     <!-- info 창 -->
-                    
+                    <ItemsControl>
+                        <ItemsControl.ItemTemplate>
+                            <
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </WrapPanel>
 
                 <WrapPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Blue"

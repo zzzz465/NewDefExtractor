@@ -23,6 +23,13 @@ namespace NewDefExtractor.GUI
 		public ConfigWindow()
 		{
 			InitializeComponent();
+			Init();
+		}
+
+		private  void Init()
+		{
+			WorkshopFolderButton.DataContext = ProgramConfig.instance.WorkshopFolderPath;
+			LocalFolderButton.DataContext = ProgramConfig.instance.LocalFolderPath;
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
