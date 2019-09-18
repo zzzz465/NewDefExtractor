@@ -57,6 +57,7 @@ namespace NewDefExtractor
 
         static string NodeBuilder(TargetNode node)
         {
+            //PatchOperationAdd 일때, PatchOperationReplace 일때, 아닐때 전부 구별해서 메소드를 만들자
 			List<XElement> nodes = new List<XElement>();
 			List<string> nodes2 = new List<string>();
             if (node.isPatch) // 패치 타입을 가져올 경우 좀 더 단순함
@@ -78,32 +79,78 @@ namespace NewDefExtractor
 				}
 				else
 				{
-					XElement Origin_li_node = node.AncestorsAndSelf.Reverse()
-																.Where(item => item.XPathSelectElement("../../xpath") != null)
+					XElement ValueNode = node.AncestorsAndSelf.Reverse()
+																.Where(item => item.XPathSelectElement("../xpath") != null)
 																.Select(item => item)
 																.FirstOrDefault();
 
-					string rawXpath = Origin_li_node.XPathSelectElement("../../xpath").Value;
-					string Xpath = Regex.Match(rawXpath, "(?<=defName=\"[\\w]*\"]/)[\\w/]+").Value;
-					MatchCollection collection = Regex.Matches(Xpath, "\\[[\\d]+\\]");
+					string rawXpath = ValueNode.XPathSelectElement("../xpath").Value;
+                    //string Xpath = Regex.Match(rawXpath, "(?<=defName=\"[\\w]*\"]/)[\\w/]+").Value;
+                    string Xpath = Regex.Match(rawXpath, "(?<=defName=\"[\\w]+\"])(/[\\w]+(\\[[\\d]+\\])*)+").Value.Substring(1);
+                    string defName = Regex.Match(rawXpath, "(?<=defName=\")[\\w]+(?=\")").Value;
+                    string ClassAttribute = ValueNode.XPathSelectElement("../.").Attribute("Class")?.Value;
+
+                    // li[숫자] 를 숫자 로 바꿔줌
+					MatchCollection collection = Regex.Matches(Xpath, "li\\[[\\d]+\\]");
 					foreach(Match matched in collection)
 					{
 						string num = Regex.Match(matched.Value, "[\\d]+").Value;
-						Xpath.Replace(matched.Value, num);
+						Xpath = Xpath.Replace(matched.Value, num);
 					}
-					nodes2.AddRange(Xpath.Split('/'));
-					nodes2.Add(Origin_li_node.Element("def")?.Value);
-					
-					IEnumerator<XElement> enumerator = node.AncestorsAndSelf.GetEnumerator();
-					while(enumerator.MoveNext())
-					{
-						if (enumerator.Current.XPathSelectElement("./def") != null)
-							break;
-					}
-					while (enumerator.MoveNext())
-					{
-						nodes.Add(enumerator.Current);
-					}
+
+                    //PatchOperationAdd 일때
+                    //PatchOperationAdd 이거 제대로 수정을 해줘야 함.
+                    if (ClassAttribute == "PatchOperationAdd" && ValueNode.Element("def") != null) 
+                    {
+                        nodes2.AddRange(Xpath.Split('/'));
+                        nodes2.Add(ValueNode.Element("def")?.Value);
+
+                        IEnumerator<XElement> enumerator = node.AncestorsAndSelf.GetEnumerator();
+                        while (enumerator.MoveNext())
+                        {
+                            if (enumerator.Current.XPathSelectElement("./def") != null)
+                                break;
+                        }
+                        while (enumerator.MoveNext())
+                        {
+                            nodes.Add(enumerator.Current);
+                        }
+                    }
+
+                    //PatchOperationReplace일때, 값을 변경하는 것이므로(노드를 삭제하고 새 노드를 집어넣음) 그냥 바로 빌드된 노드를 반환
+                    else
+                    {
+                        List<string> nodesToAdd = Xpath.Split('/').ToList();
+                        string last = nodesToAdd.Last();
+                        nodesToAdd = nodesToAdd.Take(nodesToAdd.Count - 1).ToList();
+                        string returnValue2 = defName;
+                        //if (nodesToAdd.Count > 0)
+                        //    returnValue2 += "." + string.Join(".", nodesToAdd);
+                        IEnumerator<XElement> enumerator = node.AncestorsAndSelf.GetEnumerator();
+                        while(enumerator.MoveNext())
+                        {
+                            if (enumerator.Current.Name.LocalName == "value")
+                                break;
+                        }
+                        while(enumerator.MoveNext())
+                        {
+                            nodesToAdd.Add(enumerator.Current.Name.LocalName);
+                        }
+                        if (node.currentName == "li" && int.TryParse(last, out _))
+                            nodesToAdd[nodesToAdd.Count - 1] = last;
+                        return defName + "." + string.Join(".", nodesToAdd);
+                        /*
+                        returnValue2 += ".";
+                        returnValue2 += (node.currentName == "li") ? last : node.currentName;
+                        */
+
+
+                        //string.Join(".", new string[] { defName, string.Join(".", nodesToAdd.Take(nodesToAdd.Length - 1)), node.currentName });
+                        //returnValue2 = returnValue2 + Regex.Match()
+                        //nodes2.AddRange(nodesToAdd.Take(nodesToAdd.Length - 1));
+                        //nodes.Add(node.CurrentNode);
+                        return returnValue2;
+                    }
 				}
             }
 			else

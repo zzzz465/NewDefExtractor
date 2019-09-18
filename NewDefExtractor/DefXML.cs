@@ -42,6 +42,11 @@ namespace NewDefExtractor
                 try
                 {
                     TargetNode node = new TargetNode(targetXElement, ConfigData);
+                    if (node.RootDefNode?.Attribute("Abstract")?.Value?.ToLower() == "true")
+                    {
+                        SimpleLog.WriteLine(string.Format("Abstract 노드 {0} 은 대상이 아닙니다. 노드를 건너뜁니다...", node), ConsoleColor.Red);
+                        continue;
+                    }
                     //여기 중복 체크가 제대로 되는지 확인하자. //FIXME
                     /* 기존 알고리즘 (부모 노드도 동일한지 체크)
                     bool isDuplicated = (from CollectedNode in CollectedNodes

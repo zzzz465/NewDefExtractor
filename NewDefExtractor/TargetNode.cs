@@ -22,7 +22,7 @@ namespace NewDefExtractor
         /// </summary>
         public ConfigData NodeSelector { get; }
 
-        readonly XElement CurrentNode;
+        public XElement CurrentNode;
 		private string defNameCached;
         public string defName
         {//만약 Patch에 대한걸 고치려면, xpath과 관련해서 노드명을 직접 적어줘야함... -> 여기로 옮기자.? X
@@ -150,8 +150,8 @@ namespace NewDefExtractor
             get
             {
                 return this.AncestorsAndSelf.Where(item => 
-                       item.Element("defName") != null && item.Attribute("Abstract")?.Value?.ToLower() != "abstract"
-                       && Regex.IsMatch(item.Name.LocalName, "[\\w]+Def")).FirstOrDefault();
+                       //item.Element("defName") != null// && item.Attribute("Abstract")?.Value?.ToLower() != "abstract"
+                       Regex.IsMatch(item.Name.LocalName, "[\\w]+Def")).FirstOrDefault();
             }
         }
 
@@ -226,15 +226,24 @@ namespace NewDefExtractor
                     || node.Name != "operations").Reverse();
             }
         }
-
+        private bool? isPatchCached;
         public bool isPatch
         {
             get
             {
-                if (CurrentNode.AncestorsAndSelf().First().Name.LocalName == "Defs")
-                    return false;
+                if (isPatchCached == null)
+                {
+                    #region 테스트 코드(삭제 필요)
+                    if (AncestorsAndSelf.First().Attribute("Name")?.Value == "RedHorse_BuildingBase")
+                        Debugger.Break();
+                    #endregion
+                    if (AncestorsAndSelf.First().Name.LocalName == "Defs")
+                        return false;
+                    else
+                        return true;
+                }
                 else
-                    return true;
+                    return (bool)isPatchCached;
             }
         }
 
