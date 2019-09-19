@@ -19,7 +19,7 @@ namespace NewDefExtractor
         Dictionary<DefXML, List<TargetNode>> TargetNodesByDefFile = new Dictionary<DefXML, List<TargetNode>>();
         
         public Dictionary<string, Dictionary<string, List<TargetNode>>> GetTargetNodesSorted(FileInfo[] defFiles = null)
-        {
+        {// XXXDef 안에 defName으로 정렬
             List<TargetNode> SelectedNodes = new List<TargetNode>();
             Dictionary<string, Dictionary<string, List<TargetNode>>> sorted = new Dictionary<string, Dictionary<string, List<TargetNode>>>();
             if (defFiles != null)

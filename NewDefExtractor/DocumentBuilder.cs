@@ -14,6 +14,8 @@ namespace NewDefExtractor
 {
     public static class DocumentBuilder
     {
+        static Regex liRegex = new Regex("li\\[[\\d]+\\]");
+        static Regex intRegex = new Regex("(?<=\\[)[\\d]+(?=\\])");
         /// <summary>
         /// 주어진 노드를 가지고 하나의 XDoc를 생성함
         /// </summary>
@@ -57,6 +59,7 @@ namespace NewDefExtractor
 
         static string NodeBuilder(TargetNode node)
         {
+            /*
             //PatchOperationAdd 일때, PatchOperationReplace 일때, 아닐때 전부 구별해서 메소드를 만들자
 			List<XElement> nodes = new List<XElement>();
 			List<string> nodes2 = new List<string>();
@@ -149,9 +152,9 @@ namespace NewDefExtractor
                         //returnValue2 = returnValue2 + Regex.Match()
                         //nodes2.AddRange(nodesToAdd.Take(nodesToAdd.Length - 1));
                         //nodes.Add(node.CurrentNode);
-                        return returnValue2;
-                    }
-				}
+                        //return returnValue2;
+                    //}
+				/* }
             }
 			else
 				nodes.AddRange(node.AncestorsAndSelf);
@@ -210,6 +213,117 @@ namespace NewDefExtractor
 				returnValue = node.defName + "." + string.Join(".", nodes2.ToArray()) + "." + returnValue;
 			}
             return returnValue;
+            */
+        }
+
+        static string POAddNodeStringBuilder(TargetNode targetNode)
+        {
+            XElement ValueNode = targetNode.AncestorsAndSelf.Reverse()
+                                                            .Where(item => item.XPathSelectElement("../xpath") != null)
+                                                            .Select(item => item)
+                                                            .FirstOrDefault();
+            string rawXpath = ValueNode.XPathSelectElement("../xpath").Value;
+            string Xpath = Regex.Match(rawXpath, "(?<=defName=\"[\\w]+\"])(/[\\w]+(\\[[\\d]+\\])*)+").Value.Substring(1);
+            string defName = targetNode.defName;
+            
+            bool isAddingNewDef = Regex.Match(rawXpath, "(?<=defName=\")[\\w]+(?=\")") == null ? true : false;
+
+
+            IEnumerator<XElement> enumerator = targetNode.AncestorsAndSelf.GetEnumerator();
+            while(enumerator.MoveNext())
+            {
+                if(isAddingNewDef)
+                {
+                    if(enumerator.Current.XPathSelectElement("./defName") != null) // XXXDef 에서 break
+                        break;
+                }
+                else
+                {
+                    if(enumerator.Current.Name.LocalName == "value") // Value node 에서 break
+                        break;
+                }
+            }
+            List<XElement> NodesToAdd = new List<XElement>();
+            while(enumerator.MoveNext())
+                NodesToAdd.Add(enumerator.Current);
+
+            return string.Join(".", ChangeNodeValues(NodesToAdd, targetNode));
+        }
+
+        static string POReplaceNodeStringBuilder(TargetNode targetNode)
+        {
+            XElement ValueNode = targetNode.AncestorsAndSelf.Reverse()
+                                                            .Where(item => item.XPathSelectElement("../xpath") != null)
+                                                            .Select(item => item)
+                                                            .FirstOrDefault();
+            string rawXpath = ValueNode.XPathSelectElement("../xpath").Value;
+            string Xpath = Regex.Match(rawXpath, "(?<=defName=\"[\\w]+\"])(/[\\w]+(\\[[\\d]+\\])*)+").Value.Substring(1);
+            string defName = targetNode.defName;
+            List<string> nodesToAdd = Xpath.Split('/').ToList();
+            string last = nodesToAdd.Last();
+            int i = -1;
+            nodesToAdd.ForEach(item =>
+            {
+                i++;
+                if(liRegex.Match(item).Success)
+                    nodesToAdd[i] = intRegex.Match(item).Value;
+            });
+            int result = 0;
+            if(int.TryParse(intRegex.Match(last)?.Value, out result) && targetNode.currentName == "li")
+                nodesToAdd[i] = result.ToString();
+
+            return string.Join(".", nodesToAdd);
+        }
+
+        static List<string> ChangeNodeValues(List<XElement> originalNodes, TargetNode targetnode)
+        {
+            List<string> values = new List<string>();
+            ConfigData selector = targetnode.NodeSelector;
+            bool flag = true; // X 이전 건너뛰기 위한 분기점
+
+            foreach(XElement elem in originalNodes)
+            {
+				if(!targetnode.isPatch)
+				{
+                if (elem.XPathSelectElement(selector.IgnoreBeforeThis) != null)
+                    flag = false;
+                if (flag)
+                    continue;
+				}
+
+                //string ValueToReplace = string.Empty;
+                NodeReplaceData repData;
+                if(!selector.FindMatchingConfigData(elem, out repData))
+                {
+                    values.Add(elem.Name.LocalName);
+                    continue;
+                }
+
+                string Xpath = repData.Value;
+
+                if (Xpath.Equals("#Count")) // li 전용
+                {
+                    values.Add(elem.ElementsBeforeSelf().Count().ToString());
+                }
+                else if (Xpath.StartsWith("$"))
+                {
+                    values.Add(Xpath.Substring(1));
+                }
+                else if (!string.IsNullOrEmpty(Xpath)) // 해당하는게 있다면
+                {
+                    string ValueToReplace = elem.XPathSelectElement(Xpath)?.Value;
+                    if (string.IsNullOrEmpty(ValueToReplace))
+                    {
+                        SimpleLog.WriteLine(string.Format("{0} 의 설정값인 Xpath {1} 의 값을 찾을 수 없습니다.", node.ToString(), Xpath), ConsoleColor.DarkYellow);
+                        continue;
+                    }
+                    values.Add(ValueToReplace);
+                }
+                else
+                    values.Add(elem.Name.LocalName);
+            }
+
+            return values;
         }
     }
 }
