@@ -23,6 +23,17 @@ namespace NewDefExtractor
         public ConfigData NodeSelector { get; }
 
         public XElement CurrentNode;
+        public XElement ValueNode
+        {
+            get
+            {
+                XElement ValueNode = this.AncestorsAndSelf.Reverse()
+                                                          .Where(item => item.XPathSelectElement("../xpath") != null)
+                                                          .Select(item => item)
+                                                          .FirstOrDefault();
+                return ValueNode;
+            }
+        }
 		private string defNameCached;
         public string defName
         {//만약 Patch에 대한걸 고치려면, xpath과 관련해서 노드명을 직접 적어줘야함... -> 여기로 옮기자.? X
