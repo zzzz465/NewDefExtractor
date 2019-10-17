@@ -104,9 +104,26 @@ namespace NewDefExtractor
             }
             return string.Format("{0}.{1}", node.defName, returnValue);
         }
+		[Obsolete]
 
         static string POAddNodeStringBuilder(TargetNode targetNode)
         {
+            
+            XElement ValueNode = targetNode.ValueNode;
+            string rawXpath = targetNode.AncestorsAndSelf
+                                        .Reverse()
+                                        .FirstOrDefault(elem => !string.IsNullOrEmpty(elem.Value) && elem.Name == "value")
+                                        .Value;
+            //rawXpath 값을 읽어옴
+            string defName = targetNode.defName;
+            string Xpath = Regex.Match(rawXpath, "(?<=defName=\"[\\w]+\")(/[\\w]+)").Value;
+            if(!string.IsNullOrEmpty(Xpath)) // 
+            {
+                
+            }
+
+			return string.Empty;
+            /* 
             XElement ValueNode = targetNode.ValueNode;
             string rawXpath = ValueNode.XPathSelectElement("../xpath").Value;
             string Xpath = Regex.Match(rawXpath, "(?<=defName=\"[\\w]+\"])(/[\\w]+(\\[[\\d]+\\])*)+").Value.Substring(1);
@@ -133,7 +150,7 @@ namespace NewDefExtractor
             while(enumerator.MoveNext())
                 NodesToAdd.Add(enumerator.Current);
 
-            return string.Join(".", ChangeNodeValues(NodesToAdd, targetNode));
+            return string.Join(".", ChangeNodeValues(NodesToAdd, targetNode));*/
         }
 
         static string POReplaceNodeStringBuilder(TargetNode targetNode)
@@ -177,7 +194,8 @@ namespace NewDefExtractor
                  //만약 상위 노드가 value 라면, 첫 노드를 추가하는 것이므로... 노드 이름을 숫자로 치환하면 안됨
                     if (repData.Value.StartsWith("#Count")) // 만약 #Count 라면 li 숫자로 바꿔줘야함
                     {
-                        int index = node.CurrentNode.ElementsBeforeSelf().Count();
+						//int index = node.CurrentNode.ElementsBeforeSelf().Count();
+						int index = elem.ElementsBeforeSelf().Count();
                         nodesToAdd.Add(index.ToString());
                     }
                     else
